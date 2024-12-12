@@ -1,5 +1,5 @@
 package todoapp.storage;
 
-public class Storage {
+public abstract class Storage {
     
 }

@@ -1,4 +1,4 @@
-package todoapp.taskmanager;
+package todoapp.models;
 
 public class Task {
     private String title;
