@@ -1,4 +1,4 @@
-package todoapp.storage;
+package storage;
 
 public class FileStorage {
     

@@ -1,62 +1,83 @@
-package todoapp.models;
+package models;
+import java.util.UUID;
+import java.time.LocalDate;
 
 public class Task {
+    private UUID id;
     private String title;
     private String description;
-    private String dueDate;
+    private LocalDate dueDate;
+    private LocalDate creationDate;
     private int priority;
-    private boolean isDone;
+    private boolean isComplete;
 
-    Task(String title, String description, String dueDate, int priority) {
-        this.title = title;
+    public Task(String title, String description, LocalDate dueDate, int priority) {
+        this.id = UUID.randomUUID();
         this.description = description;
+        this.isComplete = false;
+        this.title = title;
         this.dueDate = dueDate;
         this.priority = priority;
-        this.isDone = false;
+        this.creationDate = LocalDate.now();
     }
 
-    public String getTitle() {
-        return title;
+    public UUID getId() {
+        return id;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public String getDueDate() {
-        return dueDate;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public int getPriority() {
-        return priority;
+    public boolean isComplete() {
+        return isComplete;
     }
 
-    public boolean isDone() {
-        return isDone;
+    public void markComplete() {
+        this.isComplete = true;
     }
 
-    public void setDone(boolean isDone) {
-        this.isDone = isDone;
+    public void markIncomplete() {
+        this.isComplete = false;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
-    public void setDueDate(String dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 
+    public int getPriority() {
+        return priority;
+    }
+
     public void setPriority(int priority) {
+        if(priority < 1 || priority > 5) {
+            throw new IllegalArgumentException("Priority must be between 1 and 5");
+        }
         this.priority = priority;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     @Override
     public String toString() {
-        return "Title: " + title + "\nDescription: " + description + "\nDue Date: " + dueDate + "\nPriority: " + priority + "\nIs Done: " + isDone;
+        return "Task [ID=" + id + ", Title=" + title + ", Description=" + description + ", Due Date=" + dueDate + ", Priority=" + priority + ", Complete=" + isComplete + "]";
     }
 }

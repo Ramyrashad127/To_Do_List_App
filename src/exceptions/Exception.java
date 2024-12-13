@@ -1,4 +1,4 @@
-package todoapp.exceptions;
+package exceptions;
 
 public class Exception {
     
