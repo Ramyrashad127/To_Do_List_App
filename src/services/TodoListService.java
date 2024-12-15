@@ -81,4 +81,8 @@ public class TodoListService {
         fileStorage.save(todoLists);
     }
 
+    public TodoList getDefauTodoList() {
+        return todoLists.get(0);
+    }
+
 }

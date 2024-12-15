@@ -24,7 +24,7 @@ public class Cli {
         this.TaskService = new TaskService();
         this.scanner = new Scanner(System.in);
         this.input = new UserInput();
-        this.defaultTodoList = TodoListService.createTodoList("My Todo", "Default TodoList");
+        this.defaultTodoList = TodoListService.getDefauTodoList();
         this.currentTodoListId = defaultTodoList.getId();
         prompt = defaultTodoList.getTitle() + "> ";
     }
@@ -190,26 +190,42 @@ public class Cli {
 
     public void createPersonalTask() {
         String title = input.TakeString("Enter the name of the task: ");
-        String description = input.TakeString("Enter the description of the task: ");
-        String priority = input.TakePriority("Enter the priority of the task (1-5): ");
-        String dueDate = input.TakeDate("Enter the due date of the task (yyyy-mm-dd): ");
-        String category = input.TakeString("Enter the category of the task: ");
-        String location = input.TakeString("Enter the location of the task: ");
-        if (title == null || description == null || priority == null || dueDate == null || category == null || location == null) {
+        if (title == null)
             return;
-        }
+        String description = input.TakeString("Enter the description of the task: ");
+        if (description == null)
+            return;
+        String priority = input.TakePriority("Enter the priority of the task (1-5): ");
+        if (priority == null)
+            return;
+        String dueDate = input.TakeDate("Enter the due date of the task (yyyy-mm-dd): ");
+        if (dueDate == null)
+            return;
+        String category = input.TakeString("Enter the category of the task: ");
+        if (category == null)
+            return;
+        String location = input.TakeString("Enter the location of the task: ");
+        if (location == null)
+            return;
         TaskService.createPersonalTask(TodoListService.getTodoListById(currentTodoListId), title, description, dueDate, Integer.parseInt(priority), category, location);
     }
 
     public void createWorkTask() {
         String title = input.TakeString("Enter the name of the task: ");
-        String description = input.TakeString("Enter the description of the task: ");
-        String priority = input.TakePriority("Enter the priority of the task (1-5): ");
-        String dueDate = input.TakeDate("Enter the due date of the task (yyyy-mm-dd): ");
-        String project = input.TakeString("Enter the project of the task: ");
-        if (title == null || description == null || priority == null || dueDate == null || project == null) {
+        if (title == null)
             return;
-        }
+        String description = input.TakeString("Enter the description of the task: ");
+        if (description == null)
+            return;
+        String priority = input.TakePriority("Enter the priority of the task (1-5): ");
+        if (priority == null)
+            return;
+        String dueDate = input.TakeDate("Enter the due date of the task (yyyy-mm-dd): ");
+        if (dueDate == null)
+            return;
+        String project = input.TakeString("Enter the project of the task: ");
+        if (project == null)
+            return;
         List<String> collaborators = new ArrayList<>();
         while (true) {
             String collaborator = input.TakeString("Enter the name of a collaborator (or type 'done' to finish): ");
@@ -232,24 +248,40 @@ public class Cli {
         UUID taskId = input.TakeId("Enter the ID of the task: ");
         if (TaskService.getTaskType(TodoListService.getTodoListById(currentTodoListId), taskId).equals("PersonalTask")) {
             String title = input.TakeString("Enter the new name of the task: ");
-            String description = input.TakeString("Enter the new description of the task: ");
-            String priority = input.TakePriority("Enter the new priority of the task (1-5): ");
-            String dueDate = input.TakeDate("Enter the new due date of the task (yyyy-mm-dd): ");
-            String category = input.TakeString("Enter the new category of the task: ");
-            String location = input.TakeString("Enter the new location of the task: ");
-            if (title == null || description == null || priority == null || dueDate == null || category == null || location == null) {
+            if (title == null)
                 return;
-            }
+            String description = input.TakeString("Enter the new description of the task: ");
+            if (description == null)
+                return;
+            String priority = input.TakePriority("Enter the new priority of the task (1-5): ");
+            if (priority == null)
+                return;
+            String dueDate = input.TakeDate("Enter the new due date of the task (yyyy-mm-dd): ");
+            if (dueDate == null)
+                return;
+            String category = input.TakeString("Enter the new category of the task: ");
+            if (category == null)
+                return;
+            String location = input.TakeString("Enter the new location of the task: ");
+            if (location == null)
+                return;
             TaskService.updatePersonalTask(TodoListService.getTodoListById(currentTodoListId), taskId, title, description, dueDate, Integer.parseInt(priority), category, location);
         } else {
             String title = input.TakeString("Enter the new name of the task: ");
-            String description = input.TakeString("Enter the new description of the task: ");
-            String priority = input.TakePriority("Enter the new priority of the task (1-5): ");
-            String dueDate = input.TakeDate("Enter the new due date of the task (yyyy-mm-dd): ");
-            String project = input.TakeString("Enter the new project of the task: ");
-            if (title == null || description == null || priority == null || dueDate == null || project == null) {
+            if (title == null)
                 return;
-            }
+            String description = input.TakeString("Enter the new description of the task: ");
+            if (description == null)
+                return;
+            String priority = input.TakePriority("Enter the new priority of the task (1-5): ");
+            if (priority == null)
+                return;
+            String dueDate = input.TakeDate("Enter the new due date of the task (yyyy-mm-dd): ");
+            if (dueDate == null)
+                return;
+            String project = input.TakeString("Enter the new project of the task: ");
+            if (project == null)
+                return;
             List<String> collaborators = new ArrayList<>();
             while (true) {
                 String collaborator = input.TakeString("Enter the name of a collaborator (or type 'done' to finish): ");

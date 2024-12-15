@@ -22,7 +22,7 @@ public class Validator {
     }
 
     public static boolean isValidString(String str) {
-        return str != null && !str.trim().isEmpty();
+        return str != null && !(str.trim().isEmpty());
     }
 
     public static boolean isValidId(String id) {

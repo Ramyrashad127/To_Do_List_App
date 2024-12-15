@@ -19,7 +19,7 @@ public class FileStorage {
     }
 
     public void save(List<TodoList> data) {
-        try (FileWriter writer = new FileWriter(filename)) {
+        try (FileWriter writer = new FileWriter(filename, false)) {
             String json = gson.toJson(data);
             writer.write(json);
         } catch (IOException e) {
