@@ -1,4 +1,5 @@
 package models;
+import java.util.List;
 import java.util.UUID;
 import java.time.LocalDate;
 
@@ -6,19 +7,19 @@ public class Task {
     private UUID id;
     private String title;
     private String description;
-    private LocalDate dueDate;
-    private LocalDate creationDate;
+    private String dueDate;
+    private String creationDate;
     private int priority;
     private boolean isComplete;
 
-    public Task(String title, String description, LocalDate dueDate, int priority) {
+    public Task(String title, String description, String dueDate, int priority) {
         this.id = UUID.randomUUID();
-        this.description = description;
         this.isComplete = false;
-        this.title = title;
-        this.dueDate = dueDate;
-        this.priority = priority;
-        this.creationDate = LocalDate.now();
+        this.creationDate = LocalDate.now().toString();
+        setDescription(description);
+        setTitle(title);
+        setDueDate(dueDate);
+        setPriority(priority);
     }
 
     public UUID getId() {
@@ -30,6 +31,9 @@ public class Task {
     }
 
     public void setDescription(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Description cannot be empty");
+        }
         this.description = description;
     }
 
@@ -50,14 +54,25 @@ public class Task {
     }
 
     public void setTitle(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
         this.title = title;
     }
 
-    public LocalDate getDueDate() {
+    public String getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
+    public void setDueDate(String dueDate) {
+        if (dueDate == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
+        try {
+            LocalDate.parse(dueDate);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid date format. Please use the format yyyy-mm-dd");
+        }
         this.dueDate = dueDate;
     }
 
@@ -72,12 +87,12 @@ public class Task {
         this.priority = priority;
     }
 
-    public LocalDate getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
     @Override
     public String toString() {
-        return "Task [ID=" + id + ", Title=" + title + ", Description=" + description + ", Due Date=" + dueDate + ", Priority=" + priority + ", Complete=" + isComplete + "]";
+        return "Title: " + title + "\n" + "Description: " + description + "\n" + "Due Date: " + dueDate + "\n" + "Priority: " + priority + "\n" + "Creation Date: " + creationDate + "\n";
     }
 }

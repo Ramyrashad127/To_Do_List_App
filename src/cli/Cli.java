@@ -4,6 +4,10 @@ import services.TodoListService;
 import java.util.Scanner;
 import java.util.UUID;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import userinput.UserInput;
+import models.TodoList;
 
 public class Cli {
 
@@ -12,12 +16,17 @@ public class Cli {
     private Scanner scanner;
     private String prompt;
     private UUID currentTodoListId;
+    private TodoList defaultTodoList;
+    private UserInput input;
 
     public Cli() {
         this.TodoListService = new TodoListService();
         this.TaskService = new TaskService();
         this.scanner = new Scanner(System.in);
-        prompt = "> ";
+        this.input = new UserInput();
+        this.defaultTodoList = TodoListService.createTodoList("My Todo", "Default TodoList");
+        this.currentTodoListId = defaultTodoList.getId();
+        prompt = defaultTodoList.getTitle() + "> ";
     }
 
     public void run() {
@@ -25,53 +34,68 @@ public class Cli {
         System.out.println("Type 'help' to see the available commands.");
         while (true) {
             System.out.print(prompt);
-            String command = scanner.nextLine();
-            command = command.trim();
+            String command = scanner.nextLine().trim();
+            command = command.replaceAll(" ", "");
+            if (command.equals("")) {
+                continue;
+            }
             switch (command) {
-                case "exit":
-                    exit();
-                    break;
                 case "help":
                     help();
                     break;
-                case "create-todo-list":
+                case "exit":
+                    exit();
+                    break;
+                case "createtodolist":
                     createTodoList();
                     break;
-                case "remove-todo-list":
-                    removeTodoList();
-                    break;
-                case "update-todo-list":
+                case "updatetodolist":
                     updateTodoList();
                     break;
-                case "list-todo-lists":
-                    listTodoLists();
+                case "deletetodolist":
+                    deleteTodoList();
                     break;
-                case "select-todo-list":
+                case "selecttodolist":
                     selectTodoList();
                     break;
-                case "create-task":
-                    createTask();
+                case "viewtodolists":
+                    viewTodoLists();
                     break;
-                case "show-currentTodoListId":
-                    showCurrentTodoListId();
+                case "createpersonaltask":
+                    createPersonalTask();
                     break;
-                case "remove-task":
-                    removeTask();
-                    break;
-                case "update-task":
+                case "createworktask":
+                    createWorkTask();
+                    break;  
+                case "updatetask":
                     updateTask();
                     break;
-                case "list-tasks":
-                    listTasks();
+                case "deletetask":
+                    deleteTask();
                     break;
-                case "list-tasks-by-priority":
-                    listTasksByPriority();
+                case "viewtasks":
+                    viewTasks();
                     break;
-                case "list-tasks-by-status":
-                    listTasksByStatus();
+                case "completetask":
+                    completeTask();
                     break;
-                case "list-tasks-by-due-date":
-                    listTasksByDueDate();
+                case "viewcompletedtasks":
+                    viewCompletedTasks();
+                    break;
+                case "viewincompletetasks":
+                    viewIncompleteTasks();
+                    break;
+                case "viewtasksbypriority":
+                    viewTasksByPriority();
+                    break;
+                case "viewtasksbyduedate":
+                    viewTasksByDueDate();
+                    break;
+                case "showtaskdetails":
+                    showTaskDetails();
+                    break;
+                case "save":
+                    save();
                     break;
                 default:
                     System.out.println("Invalid command. Type 'help' to see the available commands.");
@@ -81,267 +105,223 @@ public class Cli {
     }
 
     public void help() {
-        System.out.println("create-todo-list");
-        System.out.println("remove-todo-list");
-        System.out.println("update-todo-list");
-        System.out.println("list-todo-lists");
-        System.out.println("create-task");
-        System.out.println("remove-task");
-        System.out.println("update-task");
-        System.out.println("mark-task-complete");
-        System.out.println("mark-task-incomplete");
-        System.out.println("list-tasks");
-        System.out.println("list-tasks-by-priority");
-        System.out.println("list-tasks-by-status");
-        System.out.println("list-tasks-by-due-date");
-        System.out.println("help");
-        System.out.println("exit");
-        System.out.println("select-todo-list");
-        System.out.println("show-currentTodoListId"); 
-        System.out.println("Note: <todoListId> and <taskId> are UUIDs. Use 'list-todo-lists' and 'list-tasks <todoListId>' to get the UUIDs.");
+        System.out.println("Available commands:");
+        System.out.println("1. create todo list");
+        System.out.println("2. update todo list");
+        System.out.println("3. delete todo list");
+        System.out.println("4. select todo list");
+        System.out.println("5. view todo lists");
+        System.out.println("6. create personal task");
+        System.out.println("7. create work task");
+        System.out.println("8. update task");
+        System.out.println("9. delete task");
+        System.out.println("10. view tasks");
+        System.out.println("11. complete task");
+        System.out.println("12. view completed tasks");
+        System.out.println("13. view incomplete tasks");
+        System.out.println("14. view tasks by priority");
+        System.out.println("15. view tasks by due date");
+        System.out.println("16. Show task details");
+        System.out.println("17. save");
+        System.out.println("18. help");
+        System.out.println("19. exit");
     }
-
     public void exit() {
+        TodoListService.save();
         System.out.println("Exiting TodoList App. Goodbye! ");
         System.exit(0);
     }
 
-    private String getValidInput(String inputMessage, String errorMessage) {
-        while (true) {
-          System.out.print(inputMessage);
-        String input = scanner.nextLine().trim();
-        if (input.isEmpty()) {
-            System.out.println(errorMessage);
-        } else {
-            return input;
-        }   
-        }
-    }
-
     public void createTodoList() {
-        String title = getValidInput("Enter the title of the TodoList: ", "Title cannot be empty. Please enter a valid title:");
-        String description = getValidInput("Enter the description of the TodoList: ", "Description cannot be empty. Please enter a valid description:");
-        
+        String title = input.TakeString("Enter the name of the TodoList: ");
+        String description = input.TakeString("Enter the description of the TodoList: ");
+        if (title == null || description == null) {
+            return;
+        }
         TodoListService.createTodoList(title, description);
     }
 
-    public void removeTodoList() {
-        System.out.print("Enter the UUID of the TodoList you want to remove: ");
-        String id = scanner.nextLine().trim();
-        try {
-            UUID todoListId = UUID.fromString(id);
-            if (todoListId.equals(currentTodoListId)) {
-                System.out.println("Cannot remove the selected TodoList. Please select another TodoList to remove.");
-                return;
-            }
-            TodoListService.removeTodoList(todoListId);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid UUID. Please enter a valid UUID.");
-        }
-            
-    }
-
     public void updateTodoList() {
-        System.out.print("Enter the UUID of the TodoList you want to update: ");
-        String id = scanner.nextLine().trim();
-        try {
-            UUID todoListId = UUID.fromString(id);
-            if(TodoListService.getTodoListById(todoListId) == null) {
-                System.out.println("TodoList not found!");
-                return;
-            }
-            String newTitle = getValidInput("Enter the new title of the TodoList: ", "Title cannot be empty. Please enter a valid title:");
-            String newDescription = getValidInput("Enter the new description of the TodoList: ", "Description cannot be empty. Please enter a valid description:");
-            TodoListService.updateTodoList(todoListId, newTitle, newDescription);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid UUID.");
+        UUID todoListId = input.TakeId("Enter the ID of the TodoList: ");
+        String newTitle = input.TakeString("Enter the new name of the TodoList: ");
+        String newDescription = input.TakeString("Enter the new description of the TodoList: ");
+        if (newTitle == null || newDescription == null) {
+            return;
+        }
+        TodoListService.updateTodoList(todoListId, newTitle, newDescription);
+        if (todoListId.equals(currentTodoListId)) {
+            prompt = newTitle + "> ";
         }
     }
 
-    public void listTodoLists() {
-        TodoListService.listTodoLists();
+    public void deleteTodoList() {
+        UUID todoListId = input.TakeId("Enter the ID of the TodoList: ");
+        if (todoListId == null) {
+            return;
+        }
+        if (todoListId.equals(defaultTodoList.getId())) {
+            System.out.println("Cannot delete the default TodoList.");
+            return;
+        }
+        if (todoListId.equals(currentTodoListId)) {
+            currentTodoListId = defaultTodoList.getId();
+            prompt = defaultTodoList.getTitle() + "> ";
+        }
+        TodoListService.removeTodoList(todoListId);
     }
 
     public void selectTodoList() {
-        System.out.print("Enter the UUID of the TodoList you want to select: ");
-        String id = scanner.nextLine().trim();
-        try {
-            UUID todoListId = UUID.fromString(id);
-            if(TodoListService.getTodoListById(todoListId) == null) {
-                System.out.println("TodoList not found!");
+        UUID todoListId = input.TakeId("Enter the ID of the TodoList: ");
+        if (todoListId == null) {
+            return;
+        }
+        if (TodoListService.getTodoListById(todoListId) != null) {
+            currentTodoListId = todoListId;
+            System.out.println("TodoList selected.");
+            prompt = TodoListService.getTodoListById(currentTodoListId).getTitle() + "> ";
+        } else {
+            System.out.println("TodoList not found!");
+        }
+    }
+
+    public void viewTodoLists() {
+        TodoListService.listTodoLists();
+    }
+
+    public void createPersonalTask() {
+        String title = input.TakeString("Enter the name of the task: ");
+        String description = input.TakeString("Enter the description of the task: ");
+        String priority = input.TakePriority("Enter the priority of the task (1-5): ");
+        String dueDate = input.TakeDate("Enter the due date of the task (yyyy-mm-dd): ");
+        String category = input.TakeString("Enter the category of the task: ");
+        String location = input.TakeString("Enter the location of the task: ");
+        if (title == null || description == null || priority == null || dueDate == null || category == null || location == null) {
+            return;
+        }
+        TaskService.createPersonalTask(TodoListService.getTodoListById(currentTodoListId), title, description, dueDate, Integer.parseInt(priority), category, location);
+    }
+
+    public void createWorkTask() {
+        String title = input.TakeString("Enter the name of the task: ");
+        String description = input.TakeString("Enter the description of the task: ");
+        String priority = input.TakePriority("Enter the priority of the task (1-5): ");
+        String dueDate = input.TakeDate("Enter the due date of the task (yyyy-mm-dd): ");
+        String project = input.TakeString("Enter the project of the task: ");
+        if (title == null || description == null || priority == null || dueDate == null || project == null) {
+            return;
+        }
+        List<String> collaborators = new ArrayList<>();
+        while (true) {
+            String collaborator = input.TakeString("Enter the name of a collaborator (or type 'done' to finish): ");
+            if (collaborator == null) {
                 return;
             }
-            currentTodoListId = todoListId;
-            prompt = TodoListService.getTodoListById(todoListId).getTitle() + "> ";
-            System.out.println("Selected TodoList: " + TodoListService.getTodoListById(todoListId).getTitle());
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid UUID. Please enter a valid UUID.");
-        }
-    }
-
-    public void showCurrentTodoListId() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
-            return;
-        }
-        System.out.println(currentTodoListId);
-    }
-
-    boolean validdueDate(String dueDate) {
-        try {
-            LocalDate.parse(dueDate);
-            if (LocalDate.parse(dueDate).isBefore(LocalDate.now())) {
-                return false;
+            if (collaborator.equals("done")) {
+                break;
             }
-            return true;
-        } catch (Exception e) {
-            return false;
+            collaborators.add(collaborator);
         }
-    }
-
-    boolean valid_priority(String priority) {
-        try {
-            int taskPriority = Integer.parseInt(priority);
-            if (taskPriority < 1 || taskPriority > 5) {
-                return false;
-            }
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-    public void createTask() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
+        String client = input.TakeString("Enter the client of the task: ");
+        if (client == null) {
             return;
         }
-        String title = getValidInput("Enter the title of the Task: ", "Title cannot be empty. Please enter a valid title:");
-        String description = getValidInput("Enter the description of the Task: ", "Description cannot be empty. Please enter a valid description:");
-        String dueDate = getValidInput("Enter the due date of the Task (YYYY-MM-DD): ", "Due date cannot be empty. Please enter a valid due date:");
-        if (!validdueDate(dueDate)) {
-            System.out.println("Invalid due date.");
-            return;
-        }
-        System.out.print("Enter the priority of the Task (1-5): ");
-        String priority = scanner.nextLine().trim();
-        if (!valid_priority(priority)) {
-            System.out.println("Please enter a valid priority.");
-        } else {
-            TaskService.addTask(TodoListService.getTodoListById(currentTodoListId), title, description, LocalDate.parse(dueDate), Integer.parseInt(priority));
-        }
-    }
-
-    public void removeTask() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
-            return;
-        }
-        System.out.print("Enter the UUID of the Task you want to remove: ");
-        String id = scanner.nextLine().trim();
-        try {
-            UUID taskId = UUID.fromString(id);
-            TaskService.removeTask(TodoListService.getTodoListById(currentTodoListId), taskId);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid UUID.");
-        }
+        TaskService.createWorkTask(TodoListService.getTodoListById(currentTodoListId), title, description, dueDate, Integer.parseInt(priority), project, collaborators, client);
     }
 
     public void updateTask() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
-            return;
-        }
-        System.out.print("Enter the UUID of the Task you want to update: ");
-        String id = scanner.nextLine().trim();
-        try {
-            UUID taskId = UUID.fromString(id);
-            if(TodoListService.getTodoListById(currentTodoListId).getTask(taskId) == null) {
-                System.out.println("Task not found!");
+        UUID taskId = input.TakeId("Enter the ID of the task: ");
+        if (TaskService.getTaskType(TodoListService.getTodoListById(currentTodoListId), taskId).equals("PersonalTask")) {
+            String title = input.TakeString("Enter the new name of the task: ");
+            String description = input.TakeString("Enter the new description of the task: ");
+            String priority = input.TakePriority("Enter the new priority of the task (1-5): ");
+            String dueDate = input.TakeDate("Enter the new due date of the task (yyyy-mm-dd): ");
+            String category = input.TakeString("Enter the new category of the task: ");
+            String location = input.TakeString("Enter the new location of the task: ");
+            if (title == null || description == null || priority == null || dueDate == null || category == null || location == null) {
                 return;
             }
-            String newTitle = getValidInput("Enter the new title of the Task: ", "Title cannot be empty. Please enter a valid title:");
-            String newDescription = getValidInput("Enter the new description of the Task: ", "Description cannot be empty. Please enter a valid description:");
-            String newDueDate = getValidInput("Enter the new due date of the Task (YYYY-MM-DD): ", "Due date cannot be empty. Please enter a valid due date:");
-            if (!validdueDate(newDueDate)) {
-                System.out.println("Invalid due date.");
+            TaskService.updatePersonalTask(TodoListService.getTodoListById(currentTodoListId), taskId, title, description, dueDate, Integer.parseInt(priority), category, location);
+        } else {
+            String title = input.TakeString("Enter the new name of the task: ");
+            String description = input.TakeString("Enter the new description of the task: ");
+            String priority = input.TakePriority("Enter the new priority of the task (1-5): ");
+            String dueDate = input.TakeDate("Enter the new due date of the task (yyyy-mm-dd): ");
+            String project = input.TakeString("Enter the new project of the task: ");
+            if (title == null || description == null || priority == null || dueDate == null || project == null) {
                 return;
             }
-            System.out.print("Enter the new priority of the Task (1-5): ");
-            String priority = scanner.nextLine().trim();
-            if (!valid_priority(priority)) {
-                System.out.println("invalid priority.");
-            } else {
-                TaskService.updateTask(TodoListService.getTodoListById(currentTodoListId), taskId, newTitle, newDescription, LocalDate.parse(newDueDate), Integer.parseInt(priority));
+            List<String> collaborators = new ArrayList<>();
+            while (true) {
+                String collaborator = input.TakeString("Enter the name of a collaborator (or type 'done' to finish): ");
+                if (collaborator == null) {
+                    return;
+                }
+                if (collaborator.equals("done")) {
+                    break;
+                }
+                collaborators.add(collaborator);
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid UUID.");
+            String client = input.TakeString("Enter the new client of the task: ");
+            if (client == null) {
+                return;
+            }
+            TaskService.updateWorkTask(TodoListService.getTodoListById(currentTodoListId), taskId, title, description, dueDate, Integer.parseInt(priority), project, collaborators, client);
         }
     }
 
-    public void markTaskComplete() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
+    public void deleteTask() {
+        UUID taskId = input.TakeId("Enter the ID of the task: ");
+        if (taskId == null) {
             return;
         }
-        System.out.print("Enter the UUID of the Task you want to mark as complete: ");
-        String id = scanner.nextLine().trim();
-        try {
-            UUID taskId = UUID.fromString(id);
-            TaskService.markTaskComplete(TodoListService.getTodoListById(currentTodoListId), taskId);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid UUID");
-        }
-    }
-    public void listTasks() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
-            return;
-        }
-        TaskService.listAllTasks(TodoListService.getTodoListById(currentTodoListId));
+        TaskService.removeTask(TodoListService.getTodoListById(currentTodoListId), taskId);
     }
 
-    public void listTasksByPriority() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
-            return;
-        }
-        System.out.print("Enter the priority of the tasks you want to list: ");
-        String priority = scanner.nextLine().trim();
-        if (!valid_priority(priority)) {
-            System.out.println("invalid priority.");
-        } else {
-            TaskService.listTasksByPriority(TodoListService.getTodoListById(currentTodoListId), Integer.parseInt(priority));
-        }   
+    public void viewTasks() {
+        TaskService.viewAllTasks(TodoListService.getTodoListById(currentTodoListId));
     }
 
-    public void listTasksByStatus() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
-            return;
-        }
-        System.out.print("Enter the status of the tasks you want to list (complete/incomplete): ");
-        String status = scanner.nextLine().trim();
-        if (status.equals("complete")) {
-            TaskService.listTasksByStatus(TodoListService.getTodoListById(currentTodoListId), true);
-        } else if (status.equals("incomplete")) {
-            TaskService.listTasksByStatus(TodoListService.getTodoListById(currentTodoListId), false);
-        } else {
-            System.out.println("Invalid status.");
-        }
+    public void viewCompletedTasks() {
+        TaskService.viewTasksByStatus(TodoListService.getTodoListById(currentTodoListId), true);
     }
 
-    public void listTasksByDueDate() {
-        if (currentTodoListId == null) {
-            System.out.println("No TodoList selected. Please select a TodoList using 'select-todo-list <todoListId>' command.");
-            return;
-        }
-        System.out.print("Enter the due date of the tasks you want to list (YYYY-MM-DD): ");
-        String dueDate = scanner.nextLine().trim();
-        if (!validdueDate(dueDate)) {
-            System.out.println("Invalid due date.");
-        } else {
-            TaskService.listTasksByDueDate(TodoListService.getTodoListById(currentTodoListId), LocalDate.parse(dueDate));
-        }
+    public void viewIncompleteTasks() {
+        TaskService.viewTasksByStatus(TodoListService.getTodoListById(currentTodoListId), false);
     }
 
+    public void completeTask() {
+        UUID taskId = input.TakeId("Enter the ID of the task: ");
+        if (taskId == null) {
+            return;
+        }
+        TaskService.markTaskIncomplete(TodoListService.getTodoListById(currentTodoListId), taskId);
+    }
+
+    public void viewTasksByPriority() {
+        String priority = input.TakePriority("Enter the priority of the tasks (1-5): ");
+        if (priority == null) {
+            return;
+        }
+        TaskService.viewTasksByPriority(TodoListService.getTodoListById(currentTodoListId), Integer.parseInt(priority));
+    }
+
+    public void viewTasksByDueDate() {
+        String dueDate = input.TakeDate("Enter the due date of the tasks (yyyy-mm-dd): ");
+        if (dueDate == null) {
+            return;
+        }
+        TaskService.viewTasksByDueDate(TodoListService.getTodoListById(currentTodoListId), LocalDate.parse(dueDate));
+    }
+
+    public void showTaskDetails() {
+        UUID taskId = input.TakeId("Enter the ID of the task: ");
+        if (taskId == null) {
+            return;
+        }
+        TaskService.showTaskDetails(TodoListService.getTodoListById(currentTodoListId), taskId);
+    }
+
+    public void save() {
+        TodoListService.save();
+    }
 }

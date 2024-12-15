@@ -1,16 +1,58 @@
 package services;
 
-import models.Task;
+import models.PersonalTask;
+import models.WorkTask;
 import models.TodoList;
 import java.util.UUID;
-import java.util.List;
+import java.security.PublicKey;
 import java.time.LocalDate;
+import java.util.List;
 
 public class TaskService {
-    public void addTask(TodoList todoList, String title, String description, LocalDate dueDate, int priority) {
-        Task newTask = new Task(title, description, dueDate, priority);
-        todoList.addTask(newTask);
-        System.out.println("Task added to the TodoList: " + title);
+
+    public void createPersonalTask(TodoList todoList, String title, String description, String dueDate, int priority, String category, String location) {
+        PersonalTask newTask = new PersonalTask(title, description, dueDate, priority, category, location);
+        todoList.addPersonalTask(newTask);
+        System.out.println("Personal Task added to the TodoList: " + todoList.getTitle());
+    }
+
+    public void createWorkTask(TodoList todoList, String title, String description, String dueDate, int priority, String project, List<String> collaborators, String client) {
+        WorkTask newTask = new WorkTask(title, description, dueDate, priority, project, collaborators, client);
+        todoList.addWorkTask(newTask);
+        System.out.println("Work Task added to the TodoList: " + title);
+    }
+
+    public boolean updatePersonalTask(TodoList todoList, UUID taskId, String title, String description, String dueDate, int priority, String category, String location) {
+        PersonalTask task = todoList.getPersonalTask(taskId);
+        if (task != null) {
+            task.setTitle(title);
+            task.setDescription(description);
+            task.setDueDate(dueDate);
+            task.setPriority(priority);
+            task.setCategory(category);
+            task.setLocation(location);
+            System.out.println("Personal Task updated: " + task.getTitle());
+            return true;
+        }
+        System.out.println("Task not found!");
+        return false;
+    }
+
+    public boolean updateWorkTask(TodoList todoList, UUID taskId, String title, String description, String dueDate, int priority, String project, List<String> collaborators, String client) {
+        WorkTask task = todoList.getWorkTask(taskId);
+        if (task != null) {
+            task.setTitle(title);
+            task.setDescription(description);
+            task.setDueDate(dueDate);
+            task.setPriority(priority);
+            task.setProject(project);
+            task.setCollaborators(collaborators);
+            task.setClient(client);
+            System.out.println("Work Task updated: " + task.getTitle());
+            return true;
+        }
+        System.out.println("Task not found!");
+        return false;
     }
 
     public boolean removeTask(TodoList todoList, UUID taskId) {
@@ -22,25 +64,35 @@ public class TaskService {
         return false;
     }
 
-    public boolean updateTask(TodoList todoList, UUID taskId, String newTitle, String newDescription, LocalDate newDueDate, int newPriority) {
-        Task task = todoList.getTask(taskId);
-        if (task != null) {
-            task.setTitle(newTitle);
-            task.setDescription(newDescription);
-            task.setDueDate(newDueDate);
-            task.setPriority(newPriority);
-            System.out.println("Task updated: " + task.getTitle());
-            return true;
+    public String getTaskType(TodoList todoList, UUID taskId) {
+        PersonalTask personalTask = todoList.getPersonalTask(taskId);
+        if (personalTask != null) {
+            return "Personal Task";
         }
-        System.out.println("Task not found!");
-        return false;
+        WorkTask workTask = todoList.getWorkTask(taskId);
+        if (workTask != null) {
+            return "Work Task";
+        }
+        return null;
     }
 
     public boolean markTaskComplete(TodoList todoList, UUID taskId) {
-        Task task = todoList.getTask(taskId);
-        if (task != null) {
-            task.markComplete();
-            System.out.println("Task marked as complete: " + task.getTitle());
+        if (todoList == null) {
+            throw new IllegalArgumentException("TodoList cannot be null");
+        }
+        if (taskId == null) {
+            throw new IllegalArgumentException("Task ID cannot be null");
+        }
+        PersonalTask personalTask = todoList.getPersonalTask(taskId);
+        if (personalTask != null) {
+            personalTask.markComplete();
+            System.out.println("Personal Task marked as complete: " + personalTask.getTitle());
+            return true;
+        }
+        WorkTask workTask = todoList.getWorkTask(taskId);
+        if (workTask != null) {
+            workTask.markComplete();
+            System.out.println("Work Task marked as complete: " + workTask.getTitle());
             return true;
         }
         System.out.println("Task not found!");
@@ -48,33 +100,61 @@ public class TaskService {
     }
 
     public boolean markTaskIncomplete(TodoList todoList, UUID taskId) {
-        Task task = todoList.getTask(taskId);
-        if (task != null) {
-            task.markIncomplete();
-            System.out.println("Task marked as incomplete: " + task.getTitle());
+        if (todoList == null) {
+            throw new IllegalArgumentException("TodoList cannot be null");
+        }
+        if (taskId == null) {
+            throw new IllegalArgumentException("Task ID cannot be null");
+        }
+        PersonalTask personalTask = todoList.getPersonalTask(taskId);
+        if (personalTask != null) {
+            personalTask.markIncomplete();
+            System.out.println("Personal Task marked as incomplete: " + personalTask.getTitle());
+            return true;
+        }
+        WorkTask workTask = todoList.getWorkTask(taskId);
+        if (workTask != null) {
+            workTask.markIncomplete();
+            System.out.println("Work Task marked as incomplete: " + workTask.getTitle());
             return true;
         }
         System.out.println("Task not found!");
         return false;
     }
 
-    public Task getTaskDetails(TodoList todoList, UUID taskId) {
-        return todoList.getTask(taskId);
+    public void showTaskDetails(TodoList todoList, UUID taskId) {
+        if (taskId == null) {
+            throw new IllegalArgumentException("Task ID cannot be null");
+        }
+        if (todoList == null) {
+            throw new IllegalArgumentException("TodoList cannot be null");
+        }
+        PersonalTask personalTask = todoList.getPersonalTask(taskId);
+        if (personalTask != null) {
+            System.out.println(personalTask);
+            return;
+        }
+        WorkTask workTask = todoList.getWorkTask(taskId);
+        if (workTask != null) {
+            System.out.println(workTask);
+            return;
+        }
+        System.out.println("Task not found!");
     }
 
-    public void listAllTasks(TodoList todoList) {
+    public void viewAllTasks(TodoList todoList) {
         todoList.listTasks();
     }
 
-    public void listTasksByPriority(TodoList todoList, int priority) {
+    public void viewTasksByPriority(TodoList todoList, int priority) {
         todoList.listTasks(priority);
     }
 
-    public void listTasksByStatus(TodoList todoList, boolean isComplete) {
+    public void viewTasksByStatus(TodoList todoList, boolean isComplete) {
         todoList.listTasks(isComplete);
     }
 
-    public void listTasksByDueDate(TodoList todoList, LocalDate dueDate) {
+    public void viewTasksByDueDate(TodoList todoList, LocalDate dueDate) {
         todoList.listTasks(dueDate);
     }
 }

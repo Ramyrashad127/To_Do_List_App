@@ -4,9 +4,19 @@ import models.TodoList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import storage.FileStorage;
 
 public class TodoListService {
     private List<TodoList> todoLists = new ArrayList<>();
+    private FileStorage fileStorage;
+
+    public TodoListService() {
+        this.fileStorage = new FileStorage("todoLists.json");
+        List<TodoList> savedTodoLists = fileStorage.load();
+        if (savedTodoLists != null) {
+            todoLists = savedTodoLists;
+        }
+    }
 
     public TodoList createTodoList(String title, String description) {
         TodoList newTodoList = new TodoList(title, description);
@@ -66,4 +76,9 @@ public class TodoListService {
     public int countTodoLists() {
         return todoLists.size();
     }
+
+    public void save(){
+        fileStorage.save(todoLists);
+    }
+
 }

@@ -8,15 +8,17 @@ public class TodoList {
     private UUID id;
     private String title;
     private String description;
-    private LocalDate creationDate;
-    private List<Task> tasks;
+    private String creationDate;
+    private List<PersonalTask> personalTasks;
+    private List<WorkTask> workTasks;
 
     public TodoList(String title, String description) {
         this.id = UUID.randomUUID();
-        this.title = title;
-        this.tasks = new ArrayList<>();
-        this.description = description;
-        this.creationDate = LocalDate.now();
+        this.creationDate = LocalDate.now().toString();
+        this.personalTasks = new ArrayList<>();
+        this.workTasks = new ArrayList<>();
+        setTitle(title);
+        setDescription(description);
     }
 
     public UUID getId() {
@@ -28,10 +30,13 @@ public class TodoList {
     }
 
     public void setTitle(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
         this.title = title;
     }
 
-    public LocalDate getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
@@ -40,25 +45,65 @@ public class TodoList {
     }
 
     public void setDescription(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Description cannot be empty");
+        }
         this.description = description;
     }
 
-    public void addTask(Task task) {
-        tasks.add(task);
+    public void addPersonalTask(PersonalTask task) {
+        if (task == null) {
+            throw new IllegalArgumentException("Task cannot be null");
+        }
+        personalTasks.add(task);
+    }
+
+    public void addWorkTask(WorkTask task) {
+        if (task == null) {
+            throw new IllegalArgumentException("Task cannot be null");
+        }
+        workTasks.add(task);
     }
 
     public boolean removeTask(UUID taskId) {
-        for (Task task : tasks) {
+        if (taskId == null) {
+            throw new IllegalArgumentException("Task ID cannot be null");
+        }
+        
+        for (PersonalTask task : personalTasks) {
             if (task.getId().equals(taskId)) {
-                tasks.remove(task);
+                personalTasks.remove(task);
+                return true;
+            }
+        }
+        for (WorkTask task : workTasks) {
+            if (task.getId().equals(taskId)) {
+                workTasks.remove(task);
                 return true;
             }
         }
         return false;
     }
 
-    public Task getTask(UUID taskId) {
-        for (Task task : tasks) {
+    public PersonalTask getPersonalTask(UUID taskId) {
+        if (taskId == null) {
+            throw new IllegalArgumentException("Task ID cannot be null");
+        }
+
+        for (PersonalTask task : personalTasks) {
+            if (task.getId().equals(taskId)) {
+                return task;
+            }
+        }
+        return null;
+    }
+
+    public WorkTask getWorkTask(UUID taskId) {
+        if (taskId == null) {
+            throw new IllegalArgumentException("Task ID cannot be null");
+        }
+
+        for (WorkTask task : workTasks) {
             if (task.getId().equals(taskId)) {
                 return task;
             }
@@ -67,22 +112,30 @@ public class TodoList {
     }
 
     public void listTasks() {
-        if (tasks.isEmpty()) {
+        if (personalTasks.isEmpty() && workTasks.isEmpty()) {
             System.out.println("No tasks available.");
         } else {
             System.out.println("Tasks in TodoList \"" + title + "\":");
-            for (Task task : tasks) {
+            for (PersonalTask task : personalTasks) {
+                System.out.println(task);
+            }
+            for (WorkTask task : workTasks) {
                 System.out.println(task);
             }
         }
     }
 
     public void listTasks(int priority) {
-        if (tasks.isEmpty()) {
+        if (personalTasks.isEmpty() && workTasks.isEmpty()) {
             System.out.println("No tasks available.");
         } else {
             System.out.println("Tasks in TodoList \"" + title + "\" with priority " + priority + ":");
-            for (Task task : tasks) {
+            for (PersonalTask task : personalTasks) {
+                if (task.getPriority() == priority) {
+                    System.out.println(task);
+                }
+            }
+            for (WorkTask task : workTasks) {
                 if (task.getPriority() == priority) {
                     System.out.println(task);
                 }
@@ -91,12 +144,16 @@ public class TodoList {
     }
 
     public void listTasks(boolean isComplete) {
-        if (tasks.isEmpty()) {
+        if (personalTasks.isEmpty() && workTasks.isEmpty()) {
             System.out.println("No tasks available.");
         } else {
-            String status = isComplete ? "complete" : "incomplete";
-            System.out.println("Tasks in TodoList \"" + title + "\" that are " + status + ":");
-            for (Task task : tasks) {
+            System.out.println("Tasks in TodoList \"" + title + "\" that are " + (isComplete ? "complete" : "incomplete") + ":");
+            for (PersonalTask task : personalTasks) {
+                if (task.isComplete() == isComplete) {
+                    System.out.println(task);
+                }
+            }
+            for (WorkTask task : workTasks) {
                 if (task.isComplete() == isComplete) {
                     System.out.println(task);
                 }
@@ -105,11 +162,20 @@ public class TodoList {
     }
 
     public void listTasks(LocalDate dueDate) {
-        if (tasks.isEmpty()) {
+        if (dueDate == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
+
+        if (personalTasks.isEmpty() && workTasks.isEmpty()) {
             System.out.println("No tasks available.");
         } else {
             System.out.println("Tasks in TodoList \"" + title + "\" due on " + dueDate + ":");
-            for (Task task : tasks) {
+            for (PersonalTask task : personalTasks) {
+                if (task.getDueDate().equals(dueDate)) {
+                    System.out.println(task);
+                }
+            }
+            for (WorkTask task : workTasks) {
                 if (task.getDueDate().equals(dueDate)) {
                     System.out.println(task);
                 }
@@ -117,28 +183,8 @@ public class TodoList {
         }
     }
 
-    public void markTaskIncomplete(UUID taskId) {
-        Task task = getTask(taskId);
-        if (task != null) {
-            task.markIncomplete();
-            System.out.println("Task marked incomplete: " + task.getTitle());
-        } else {
-            System.out.println("Task not found!");
-        }
-    }
-
-    public void markTaskComplete(UUID taskId) {
-        Task task = getTask(taskId);
-        if (task != null) {
-            task.markComplete();
-            System.out.println("Task marked complete: " + task.getTitle());
-        } else {
-            System.out.println("Task not found!");
-        }
-    }
-
     @Override
     public String toString() {
-        return "TodoList [id=" + id + ", title=" + title + "]";
+        return "id:" + id + "\n" + "TodoList: " + title + "\n" + "Description: " + description + "\n" + "Creation Date: " + creationDate + "\n";
     }
 }
