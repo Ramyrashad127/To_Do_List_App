@@ -22,6 +22,9 @@ public class PersonalTask extends Task {
         this.category = category;
     }
 
+    /*
+     * 
+     */
     public String getLocation() {
         return location;
     }
