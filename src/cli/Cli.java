@@ -326,7 +326,7 @@ public class Cli {
         if (taskId == null) {
             return;
         }
-        TaskService.markTaskIncomplete(TodoListService.getTodoListById(currentTodoListId), taskId);
+        TaskService.markTaskComplete(TodoListService.getTodoListById(currentTodoListId), taskId);
     }
 
     public void viewTasksByPriority() {

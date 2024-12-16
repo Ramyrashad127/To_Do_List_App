@@ -79,20 +79,27 @@ public class Task {
     public int getPriority() {
         return priority;
     }
-
+    /*
+     * Set the priority of the task
+     * @param priority the priority of the task
+     * @return void
+     */
     public void setPriority(int priority) {
         if(priority < 1 || priority > 5) {
             throw new IllegalArgumentException("Priority must be between 1 and 5");
         }
         this.priority = priority;
     }
-
+    /*
+     * Get the creation date of the task
+     * @return the creation date of the task
+     */
     public String getCreationDate() {
         return creationDate;
     }
 
     @Override
     public String toString() {
-        return "id: " + id + "\n" + "Title: " + title + "\n" + "Description: " + description + "\n" + "Due Date: " + dueDate + "\n" + "Priority: " + priority + "\n" + "Creation Date: " + creationDate + "\n";
+        return "id: " + id + "\n" + "Title: " + title + "\n" + "Description: " + description + "\n" + "Due Date: " + dueDate + "\n" + "Priority: " + priority + "\n" + "Creation Date: " + creationDate + "\n" + "Is Complete: " + isComplete + "\n";
     }
 }
