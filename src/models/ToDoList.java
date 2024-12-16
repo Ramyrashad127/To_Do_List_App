@@ -188,6 +188,6 @@ public class TodoList {
 
     @Override
     public String toString() {
-        return "id:" + id + "\n" + "TodoList: " + title + "\n" + "Description: " + description + "\n" + "Creation Date: " + creationDate + "\n";
+        return "id: " + id + "\n" + "TodoList: " + title + "\n" + "Description: " + description + "\n" + "Creation Date: " + creationDate + "\n";
     }
 }
