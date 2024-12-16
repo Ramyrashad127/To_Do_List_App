@@ -134,18 +134,23 @@ public class Cli {
 
     public void createTodoList() {
         String title = input.TakeString("Enter the name of the TodoList: ");
-        String description = input.TakeString("Enter the description of the TodoList: ");
-        if (title == null || description == null) {
+        if (title == null)
             return;
-        }
+        String description = input.TakeString("Enter the description of the TodoList: ");
+        if (description == null)
+            return;
         TodoListService.createTodoList(title, description);
     }
 
     public void updateTodoList() {
         UUID todoListId = input.TakeId("Enter the ID of the TodoList: ");
+        if (todoListId == null)
+            return;
         String newTitle = input.TakeString("Enter the new name of the TodoList: ");
+        if (newTitle == null)
+            return;
         String newDescription = input.TakeString("Enter the new description of the TodoList: ");
-        if (newTitle == null || newDescription == null) {
+        if (newDescription == null) {
             return;
         }
         TodoListService.updateTodoList(todoListId, newTitle, newDescription);
@@ -246,6 +251,8 @@ public class Cli {
 
     public void updateTask() {
         UUID taskId = input.TakeId("Enter the ID of the task: ");
+        if (taskId == null)
+            return;
         if (TaskService.getTaskType(TodoListService.getTodoListById(currentTodoListId), taskId).equals("PersonalTask")) {
             String title = input.TakeString("Enter the new name of the task: ");
             if (title == null)
