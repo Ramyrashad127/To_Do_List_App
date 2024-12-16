@@ -83,7 +83,7 @@ public class TodoListService {
 
     public TodoList getDefauTodoList() {
         if (todoLists.isEmpty()) {
-            return createTodoList("Default", "Default TodoList");
+            return createTodoList("My Todo", "Default TodoList");
         }
         return todoLists.get(0);
     }
