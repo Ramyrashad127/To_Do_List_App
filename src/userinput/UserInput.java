@@ -4,6 +4,10 @@ import java.util.UUID;
 
 public class UserInput {
     private Scanner scanner;
+ /*
+ * constructor for userinput class
+ *  read input from the console
+ */
     public UserInput() {
         scanner = new Scanner(System.in);
     }
