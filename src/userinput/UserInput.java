@@ -11,7 +11,12 @@ public class UserInput {
     public UserInput() {
         scanner = new Scanner(System.in);
     }
-
+ /*
+ * Prompts the user for a string input and validates it
+ * 
+ * @param prompt the message displayed to the user to request input
+ * @return the validat string input from the user, or null if the user chooses not to try again
+ */
     public String TakeString(String prompt) {
         System.out.println(prompt);
         String input = scanner.nextLine();
@@ -26,7 +31,12 @@ public class UserInput {
             return null;
         }
     }
-
+ /*
+ * prompts the user for a priority input and validates it
+ * 
+ * @param prompt the message displayed to the user to request input
+ * @return the validated priority input as a string, or null if the user chooses not to try again
+ */
     public String TakePriority(String prompt) {
         System.out.println(prompt);
         String input = scanner.nextLine();
@@ -41,7 +51,12 @@ public class UserInput {
             return null;
         }
     }
-
+ /*
+ * Prompts the user for a date input and validates it
+ * 
+ * @param prompt the message displayed to the user to request input
+ * @return the validated date input as a string, or null if the user chooses not to try again
+ */
     public String TakeDate(String prompt) {
         System.out.println(prompt);
         String input = scanner.nextLine();
@@ -56,7 +71,12 @@ public class UserInput {
             return null;
         }
     }
-
+ /*
+ * Prompts the user for an ID input and validates it
+ * 
+ * @param prompt the message displayed to the user to request input
+ * @return the validated ID as a UUID object, or null if the user chooses not to try again
+ */
     public UUID TakeId(String prompt) {
         System.out.println(prompt);
         String input = scanner.nextLine();
