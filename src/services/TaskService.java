@@ -17,7 +17,7 @@ public class TaskService {
  * @param description a brief description of the task
  * @param dueDate the due date for the task in a string format
  * @param priority the priority level of the task (1 to 5)
- * @param category the category of the task ("Work", "Personal")
+ * @param category the category of the task
  * @param location the location associated with the task
  * @return void
  */
@@ -62,7 +62,18 @@ public class TaskService {
         System.out.println("Task not found!");
         return false;
     }
-
+    /*
+     * Updates an existing work task in the specified todoList
+     * @param todoList the TodoList object containing the work task
+     * @param taskId the unique identifier (UUID) of the work task to be updated
+     * @param title the new title for the task
+     * @param description the new description for the task
+     * @param dueDate the new due date for the task as a string
+     * @param priority the new priority level for the task (1 to 5)
+     * @param project the new project for the task
+     * @param collaborators the new list of collaborators for the task
+     * @param client the new client for the task
+     */
     public boolean updateWorkTask(TodoList todoList, UUID taskId, String title, String description, String dueDate, int priority, String project, List<String> collaborators, String client) {
         WorkTask task = todoList.getWorkTask(taskId);
         if (task != null) {
