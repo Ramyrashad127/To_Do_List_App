@@ -10,6 +10,13 @@ public class TodoListService {
     private List<TodoList> todoLists = new ArrayList<>();
     private FileStorage fileStorage;
 
+    /*
+     * Constructor to initialize the FileStorage object and load the saved TodoLists
+     * from the file. If the file does not exist, it will create a new file.
+     * If the file is empty, it will initialize an empty list of TodoLists.
+     * If the file is not empty, it will load the saved TodoLists from the file.
+     * @return void
+     */
     public TodoListService() {
         this.fileStorage = new FileStorage("todoLists.json");
         List<TodoList> savedTodoLists = fileStorage.load();
@@ -18,6 +25,13 @@ public class TodoListService {
         }
     }
 
+    /*
+     * Create a new TodoList with the given title and description.
+     * @param title: The title of the TodoList
+     * @param description: The description of the TodoList
+     * @return TodoList: The newly created TodoList
+     * @return void
+     */
     public TodoList createTodoList(String title, String description) {
         TodoList newTodoList = new TodoList(title, description);
         todoLists.add(newTodoList);
@@ -25,6 +39,11 @@ public class TodoListService {
         return newTodoList;
     }
 
+    /*
+     * Remove a TodoList with the given ID.
+     * @param todoListId: The ID of the TodoList to be removed
+     * @return boolean: True if the TodoList is removed successfully, False otherwise
+     */
     public boolean removeTodoList(UUID todoListId) {
         for (TodoList todoList : todoLists) {
             if (todoList.getId().equals(todoListId)) {
@@ -37,6 +56,13 @@ public class TodoListService {
         return false;
     }
 
+    /*
+     * Update the title and description of a TodoList with the given ID.
+     * @param todoListId: The ID of the TodoList to be updated
+     * @param newTitle: The new title of the TodoList
+     * @param newDescription: The new description of the TodoList
+     * @return boolean: True if the TodoList is updated successfully, False otherwise
+     */
     public boolean updateTodoList(UUID todoListId, String newTitle, String newDescription) {
         TodoList todoList = getTodoListById(todoListId);
         if (todoList != null) {
@@ -49,6 +75,11 @@ public class TodoListService {
         return false;
     }
 
+    /*
+     * Get a TodoList with the given ID.
+     * @param todoListId: The ID of the TodoList to be retrieved
+     * @return TodoList: The TodoList with the given ID, or null if not found
+     */
     public TodoList getTodoListById(UUID todoListId) {
         for (TodoList todoList : todoLists) {
             if (todoList.getId().equals(todoListId)) {
@@ -58,10 +89,19 @@ public class TodoListService {
         return null;
     }
 
+    /*
+     * Get a TodoList with the given ID.
+     * @param todoListId: The ID of the TodoList to be retrieved
+     * @return TodoList: The TodoList with the given ID, or null if not found
+     */
     public TodoList getTodoList(UUID todoListId) {
         return getTodoListById(todoListId);
     }
 
+    /*
+     * List all TodoLists available.
+     * @return void
+     */
     public void listTodoLists() {
         if (todoLists.isEmpty()) {
             System.out.println("No TodoLists available.");
@@ -73,14 +113,27 @@ public class TodoListService {
         }
     }
 
+    /*
+     * Count the number of TodoLists available.
+     * @return int: The number of TodoLists available
+     */
     public int countTodoLists() {
         return todoLists.size();
     }
 
+    /*
+     * Save the TodoLists to the file.
+     * @return void
+     */
     public void save(){
         fileStorage.save(todoLists);
     }
 
+    /*
+     * Get the default TodoList.
+     * If there are no TodoLists available, it will create a new default TodoList.
+     * @return TodoList: The default TodoList
+     */
     public TodoList getDefauTodoList() {
         if (todoLists.isEmpty()) {
             return createTodoList("My Todo", "Default TodoList");

@@ -28,25 +28,34 @@ public class TaskService {
         System.out.println("Personal Task added to the TodoList: " + todoList.getTitle());
     }
 
+    /*
+     * Creates a new work task and adds it to the specified todoList
+     * @param todoList the TodoList object where the task will be added
+     * @param title the title of the task
+     * @param description a brief description of the task
+     * @param dueDate the due date for the task in a string format
+     * @param priority the priority level of the task (1 to 5)
+     * @param project the project associated with the task
+     * @param collaborators the list of collaborators for the task
+     * @param client the client associated with the task
+     * @return void
+     */
     public void createWorkTask(TodoList todoList, String title, String description, String dueDate, int priority, String project, List<String> collaborators, String client) {
         WorkTask newTask = new WorkTask(title, description, dueDate, priority, project, collaborators, client);
         todoList.addWorkTask(newTask);
         System.out.println("Work Task added to the TodoList: " + title);
     }
- /*
- * Updates an existing personal task in the specified todoList
- * 
- * @param todoList the TodoList object containing the personal task
- * @param taskId the unique identifier (UUID) of the personal task to be updated
- * @param title the new title for the task
- * @param description the new description for the task
- * @param dueDate the new due date for the task as a string
- * @param priority the new priority level for the task ( 1 to 5)
- * @param category the new category for the task
- * @param location the new location for the task
- * @return true if the task was updated successfully, false if the task was not found
- */
-
+    /*
+     * Updates an existing personal task in the specified todoList
+     * @param todoList the TodoList object containing the personal task
+     * @param taskId the unique identifier (UUID) of the personal task to be updated
+     * @param title the new title for the task
+     * @param description the new description for the task
+     * @param dueDate the new due date for the task as a string
+     * @param priority the new priority level for the task (1 to 5)
+     * @param category the new category for the task
+     * @param location the new location for the task
+     */
     public boolean updatePersonalTask(TodoList todoList, UUID taskId, String title, String description, String dueDate, int priority, String category, String location) {
         PersonalTask task = todoList.getPersonalTask(taskId);
         if (task != null) {
@@ -90,14 +99,13 @@ public class TaskService {
         System.out.println("Task not found!");
         return false;
     }
- /*
- * removes a task from the specified todolist 
- * 
- * @param todoList the todolist object from which the task will be removed
- * @param taskId the unique identifier (UUID) of the task to be removed
- * @return true if the task was successfully removed,  false if the task was not found
- */
 
+    /*
+     * Removes a task from the specified todoList
+     * @param todoList the TodoList object containing the task
+     * @param taskId the unique identifier (UUID) of the task to be removed
+     * @return true if the task was successfully removed, false if the task was not found
+     */
     public boolean removeTask(TodoList todoList, UUID taskId) {
         if (todoList.removeTask(taskId)) {
             System.out.println("Task removed from the TodoList");
@@ -106,14 +114,13 @@ public class TaskService {
         System.out.println("Task not found!");
         return false;
     }
- /*
- * retrieves the type of a task from the specified todolist
- * 
- * @param todoList the todolist object containing the tasks
- * @param taskId the unique identifier (UUID) of the task whose type is to be determined
- * @return a string indicating the type of the task "Personal Task" or "Work Task", or null if the task is not found
- */
 
+    /*
+     * Retrieves the type of a task from the specified todoList
+     * @param todoList the TodoList object containing the tasks
+     * @param taskId the unique identifier (UUID) of the task
+     * @return the type of the task (Personal Task or Work Task) or null if the task was not found
+     */
     public String getTaskType(TodoList todoList, UUID taskId) {
         PersonalTask personalTask = todoList.getPersonalTask(taskId);
         if (personalTask != null) {
@@ -125,14 +132,13 @@ public class TaskService {
         }
         return null;
     }
- /*
- * marks a task as complete in the specified todolist
- * 
- * @param todoList the TodoList object containing the tasks
- * @param taskId the unique identifier (UUID) of the task to be marked as complete
- * @return true if the task was successfully marked as complete, false if the task was not found
- */
 
+    /*
+     * Marks a task as complete in the specified todoList
+     * @param todoList the TodoList object containing the tasks
+     * @param taskId the unique identifier (UUID) of the task to be marked as complete
+     * @return true if the task was successfully marked as complete, false if the task was not found
+     */
     public boolean markTaskComplete(TodoList todoList, UUID taskId) {
         if (todoList == null) {
             throw new IllegalArgumentException("TodoList cannot be null");
@@ -155,14 +161,13 @@ public class TaskService {
         System.out.println("Task not found!");
         return false;
     }
- /*
- * marks a task as incomplete in the specified todolist
- * 
- * @param todoList the TodoList object containing the tasks
- * @param taskId the unique identifier (UUID) of the task to be marked as incomplete
- * @return true if the task was successfully marked as incomplete, false if the task was not found
- */
 
+    /*
+     * Marks a task as incomplete in the specified todoList
+     * @param todoList the TodoList object containing the tasks
+     * @param taskId the unique identifier (UUID) of the task to be marked as incomplete
+     * @return true if the task was successfully marked as incomplete, false if the task was not found
+     */
     public boolean markTaskIncomplete(TodoList todoList, UUID taskId) {
         if (todoList == null) {
             throw new IllegalArgumentException("TodoList cannot be null");
@@ -185,13 +190,13 @@ public class TaskService {
         System.out.println("Task not found!");
         return false;
     }
- /*
- * displays the details of a task from the specified todolist
- * 
- * @param todoList the TodoList object containing the tasks
- * @param taskId the unique identifier (UUID) of the task whose details are to be displayed
- */
 
+    /*
+     * Shows the details of a task in the specified todoList
+     * @param todoList the TodoList object containing the tasks
+     * @param taskId the unique identifier (UUID) of the task to be displayed
+     * @return void
+     */
     public void showTaskDetails(TodoList todoList, UUID taskId) {
         if (taskId == null) {
             throw new IllegalArgumentException("Task ID cannot be null");
@@ -212,18 +217,41 @@ public class TaskService {
         System.out.println("Task not found!");
     }
 
+    /*
+     * Shows all tasks in the specified todoList
+     * @param todoList the TodoList object containing the tasks
+     * @return void
+     */
     public void viewAllTasks(TodoList todoList) {
         todoList.listTasks();
     }
 
+    /*
+     * Shows tasks in the specified todoList with the specified priority
+     * @param todoList the TodoList object containing the tasks
+     * @param priority the priority level of the tasks to be displayed
+     * @return void
+     */
     public void viewTasksByPriority(TodoList todoList, int priority) {
         todoList.listTasks(priority);
     }
 
+    /*
+     * Shows tasks in the specified todoList with the specified status (complete or incomplete)
+     * @param todoList the TodoList object containing the tasks
+     * @param isComplete true if the tasks to be displayed are complete, false if they are incomplete
+     * @return void
+     */
     public void viewTasksByStatus(TodoList todoList, boolean isComplete) {
         todoList.listTasks(isComplete);
     }
 
+    /*
+     * Shows tasks in the specified todoList with the specified due date
+     * @param todoList the TodoList object containing the tasks
+     * @param dueDate the due date of the tasks to be displayed
+     * @return void
+     */
     public void viewTasksByDueDate(TodoList todoList, LocalDate dueDate) {
         todoList.listTasks(dueDate);
     }
