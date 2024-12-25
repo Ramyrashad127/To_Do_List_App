@@ -15,7 +15,6 @@ public class PersonalTask extends Task {
 
     /*
      * Constructor for the PersonalTask class.
-     * 
      * @param title       The title of the task (inherited from Task).
      * @param description The description of the task (inherited from Task).
      * @param dueDate     The due date of the task in String format (inherited from Task).
@@ -32,7 +31,6 @@ public class PersonalTask extends Task {
 
     /*
      * Retrieves the category of the personal task.
-     * 
      * @return The category of the task.
      */
     public String getCategory() {
@@ -42,7 +40,6 @@ public class PersonalTask extends Task {
 
     /*
      * Sets the category for the personal task.
-     * 
      * @param category The category of the task.
      * @throws IllegalArgumentException if category is null or empty.
      */
@@ -55,7 +52,6 @@ public class PersonalTask extends Task {
 
     /*
      * Retrieves the location of the personal task.
-     * 
      * @return The location of the task.
      */
     
@@ -66,7 +62,6 @@ public class PersonalTask extends Task {
 
     /*
      * Sets the location for the personal task.
-     * 
      * @param location The location associated with the task.
      * @throws IllegalArgumentException if location is null or empty.
      */
@@ -81,7 +76,6 @@ public class PersonalTask extends Task {
     /*
      * Returns a string representation of the PersonalTask object, 
      * including details from the parent Task class.
-     * 
      * @return A formatted string with task details.
      */
     @Override
