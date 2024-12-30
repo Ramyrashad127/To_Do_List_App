@@ -53,10 +53,20 @@ git clone https://github.com/Ramyrashad127/to_do_list_app.git
     cd to_do_list_app
     ```
 2. Compile the project:
+   1- windows
     ```bash
     javac -cp "lib/*" -d out src/Main.java src/cli/*.java src/models/*.java src/services/*.java src/userinput/*.java src/storage/*.java
     ```
-3. Run the application:
+    2 - linux
+       ```bash
+    javac -cp "lib/*" -d out src/Main.java src/cli/*.java src/models/*.java src/services/*.java src/userinput/*.java src/storage/*.java
+    ```
+4. Run the application:
+    1- windows
     ```bash
     java -cp "out;lib/*" Main
+    ```
+    2 - linux
+    ```bash
+    java -cp "out:lib/*" Main
     ```
